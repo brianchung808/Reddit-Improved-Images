@@ -1,7 +1,7 @@
 reddit_show_images
 ==================
 
-Hotkey (+) for expanding/collapsing all images on a reddit page. 
+Chrome extension that adds a hotkey (+) for expanding/collapsing all images on a reddit page. 
 
 Features to be added:
 1. Resizing images by dragging.
