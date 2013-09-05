@@ -17,7 +17,6 @@ document.body.onkeydown = function(event) {
 		}
 
 		image_visible = !image_visible;	
-
 	} 
 }
 
@@ -35,6 +34,39 @@ var reddit = {
 
 			for(var i = 0; i < entries.length; i++) {
 				var $this = entries[i];
+
+				// get window dimensions
+				var w = window,
+				    d = document,
+				    e = d.documentElement,
+				    g = d.getElementsByTagName('body')[0],
+				    x = w.innerWidth || e.clientWidth || g.clientWidth,
+				    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+				// calculate width for image by getting window height - sidebars
+				var side = document.getElementsByClassName('side')[0];
+				var contents = document.getElementsByClassName('contents')[0];
+
+				var sidebar_width;
+
+				if(side && contents) {
+					sidebar_width = side.offsetWidth - contents.offsetWidth;
+				} else if(side) {
+					sidebar_width = side.offsetWidth;
+				} else if(contents) {
+					sidebar_width = contents.offsetWidth;
+				} else {
+					sidebar_width = 0;
+				}
+
+				var max_width = x - sidebar_width;
+				// var max_width = $this.offsetWidth;
+
+				// make the pic max width a bit smaller
+				max_width *= 0.8;
+
+				// console.log(max_width);
+
 				var img_link = $this.getElementsByTagName('a')[0].href;
 				var img_link_lowercase = img_link.toLowerCase();
 
@@ -47,6 +79,18 @@ var reddit = {
 			    	var img_div = document.createElement('img');
 			    	img_div.setAttribute('src', img_link);
 			    	img_div.setAttribute('class', 'visible_image');
+
+			    	// append to get the dimensions
+			    	document.body.appendChild(img_div);
+
+			    	var ratio = max_width / img_div.offsetWidth; 
+			    	var max_height = img_div.offsetHeight * ratio;
+			    	img_div.setAttribute('width', max_width);
+			    	img_div.setAttribute('height', max_height);
+
+			    	remove(img_div);
+
+
 
 			    	a.appendChild(img_div);
 
