@@ -35,36 +35,11 @@ var reddit = {
 			// for each of the posts
 			for(var i = 0; i < entries.length; i++) {
 				var $this = entries[i];
+				
 
-				// get window dimensions
-				var w = window,
-				    d = document,
-				    e = d.documentElement,
-				    g = d.getElementsByTagName('body')[0],
-				    x = w.innerWidth || e.clientWidth || g.clientWidth,
-				    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-
-				// calculate width for image by getting window height - sidebars
-				var side = document.getElementsByClassName('side')[0];
-				var contents = document.getElementsByClassName('contents')[0];
-
-				var sidebars_width;
-
-				if(side && contents) {
-					sidebars_width = side.offsetWidth + contents.offsetWidth;
-				} else if(side) {
-					sidebars_width = side.offsetWidth;
-				} else if(contents) {
-					sidebars_width = contents.offsetWidth;
-				} else {
-					sidebars_width = 0;
-				}
-
-				var max_width = x - sidebars_width;
 				// var max_width = $this.offsetWidth;
 
-				// make the pic max width a bit smaller
-				max_width *= 0.8;
+
 
 				// console.log(max_width);
 
@@ -92,28 +67,52 @@ var reddit = {
 			    	img_link_lowercase.indexOf('.bmp') != -1) {
 
 			    	var a = document.createElement('a');
-					a.setAttribute('href', img_link)  	;
+					a.setAttribute('href', img_link);
 			    	var img_div = document.createElement('img');
+			    		
+			    	// calculate display dimensions onload
+			    	img_div.onload = function() {
+			    		var width = this.clientWidth;
+			    		var height = this.clientHeight;
+
+			    		// get any side content to calculate max content width
+						var side = document.getElementsByClassName('side')[0];
+						var contents = document.getElementsByClassName('contents')[0];
+						var max_width = get_maincontent_width([side, contents]);
+
+						// make the pic max width a bit smaller
+						max_width *= 0.8;	
+
+				    	var ratio = max_width / width; 
+				    	var max_height;
+
+				    	if(isFinite(ratio)) {
+					    	if(ratio < 1.0){
+					    		max_height = height * ratio;
+					    	} else {
+					    		max_height = height;
+					    		max_width = width;
+					    	}
+					    } else {
+					    	max_width = 0;
+					    	max_height = 0;
+					    }
+
+				    	this.setAttribute('width', max_width);
+				    	this.setAttribute('height', max_height);
+
+				    	console.log(this.src + " " + ratio);
+			    	}
+				
 			    	img_div.setAttribute('src', img_link);
 			    	img_div.setAttribute('class', 'visible_image');
-
-			    	// append to get the dimensions
-			    	document.body.appendChild(img_div);
-
-			    	var ratio = max_width / img_div.offsetWidth; 
-			    	var max_height = img_div.offsetHeight * ratio;
-			    	img_div.setAttribute('width', max_width);
-			    	img_div.setAttribute('height', max_height);
-
-			    	remove(img_div);
-
-
 
 			    	a.appendChild(img_div);
 
 			    	$this.appendChild(a);
-			    }
-			}
+
+			    } // end if
+			} // end for
 
 /*
 			$('.entry').each(function() {  
@@ -133,7 +132,7 @@ var reddit = {
 			  }
 			});
 */
-		}
+		} // end else
 	}, 
 
 	hideAllImages: function() {
@@ -151,6 +150,32 @@ var reddit = {
 			show(pics[i]);
 		}
 	}
+}
+
+function get_maincontent_width(sideDivs) {
+	// get window dimensions
+	var w = window,
+	    d = document,
+	    e = d.documentElement,
+	    g = d.getElementsByTagName('body')[0],
+	    x = w.innerWidth || e.clientWidth || g.clientWidth,
+	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+
+	var max_width = x;
+
+	if(sideDivs === undefined || sideDivs === null || sideDivs.length === 0) {
+		return max_width;
+	}
+
+	for(var i = 0; i < sideDivs.length; i++) {
+		var $this = sideDivs[i];
+		if($this) {
+			max_width -= $this.clientWidth;
+		}
+	}
+
+	return max_width;
 }
 
 
