@@ -32,6 +32,7 @@ var reddit = {
 		} else {
 			var entries = document.getElementsByClassName('entry');
 
+			// for each of the posts
 			for(var i = 0; i < entries.length; i++) {
 				var $this = entries[i];
 
@@ -47,19 +48,19 @@ var reddit = {
 				var side = document.getElementsByClassName('side')[0];
 				var contents = document.getElementsByClassName('contents')[0];
 
-				var sidebar_width;
+				var sidebars_width;
 
 				if(side && contents) {
-					sidebar_width = side.offsetWidth - contents.offsetWidth;
+					sidebars_width = side.offsetWidth + contents.offsetWidth;
 				} else if(side) {
-					sidebar_width = side.offsetWidth;
+					sidebars_width = side.offsetWidth;
 				} else if(contents) {
-					sidebar_width = contents.offsetWidth;
+					sidebars_width = contents.offsetWidth;
 				} else {
-					sidebar_width = 0;
+					sidebars_width = 0;
 				}
 
-				var max_width = x - sidebar_width;
+				var max_width = x - sidebars_width;
 				// var max_width = $this.offsetWidth;
 
 				// make the pic max width a bit smaller
@@ -70,9 +71,25 @@ var reddit = {
 				var img_link = $this.getElementsByTagName('a')[0].href;
 				var img_link_lowercase = img_link.toLowerCase();
 
-			    if( img_link_lowercase.indexOf('jpg') != -1
-		         || img_link_lowercase.indexOf('png') != -1
-			     || img_link_lowercase.indexOf('gif') != -1) {
+				/*
+				var link_is_image = false;
+				
+				var img_formats = ['jpg', 'png', 'gif', 'tiff', 'bmp'];
+				for(var i = 0; i < img_formats.length; i++) {
+					console.log('yolo');
+					if(img_link_lowercase.indexOf(img_formats[i]) != -1) {
+						console.log('swaggg');
+						link_is_image = true;
+						break;
+					}
+				}
+				*/
+
+			    if(img_link_lowercase.indexOf('.jpg') != -1 ||
+			    	img_link_lowercase.indexOf('.png') != -1 ||
+			    	img_link_lowercase.indexOf('.gif') != -1 ||
+			    	img_link_lowercase.indexOf('.tiff') != -1 ||
+			    	img_link_lowercase.indexOf('.bmp') != -1) {
 
 			    	var a = document.createElement('a');
 					a.setAttribute('href', img_link)  	;
