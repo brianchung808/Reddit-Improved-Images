@@ -11,7 +11,8 @@
     "matches": ["http://www.reddit.com/*"],
     "js": ["reddit_show_all_images.js"]
   }
-  ]/*,
+  ]
+  /*,
 
   "permissions": [
     "https://secure.flickr.com/"

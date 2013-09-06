@@ -1,5 +1,13 @@
 var image_visible = false;
 var first_load = true;
+var LOGGING = true;
+
+
+document.onload = function() {
+	// load the div to display image hover when mouseover img link...
+	// also do for videos?
+}
+
 
 document.body.onkeydown = function(event) {
 	event = event || window.event;
@@ -35,15 +43,14 @@ var reddit = {
 			// for each of the posts
 			for(var i = 0; i < entries.length; i++) {
 				var $this = entries[i];
-				
-
-				// var max_width = $this.offsetWidth;
-
-
-
-				// console.log(max_width);
-
 				var img_link = $this.getElementsByTagName('a')[0].href;
+
+				// imgur case
+				if(img_link.indexOf('imgur') != -1) {
+					img_link = img_link + '.gif';
+				}
+
+
 				var img_link_lowercase = img_link.toLowerCase();
 
 				/*
@@ -51,9 +58,9 @@ var reddit = {
 				
 				var img_formats = ['jpg', 'png', 'gif', 'tiff', 'bmp'];
 				for(var i = 0; i < img_formats.length; i++) {
-					console.log('yolo');
+					log('yolo');
 					if(img_link_lowercase.indexOf(img_formats[i]) != -1) {
-						console.log('swaggg');
+						log('swaggg');
 						link_is_image = true;
 						break;
 					}
@@ -66,6 +73,7 @@ var reddit = {
 			    	img_link_lowercase.indexOf('.tiff') != -1 ||
 			    	img_link_lowercase.indexOf('.bmp') != -1) {
 
+			    	var div = document.createElement('div');
 			    	var a = document.createElement('a');
 					a.setAttribute('href', img_link);
 			    	var img_div = document.createElement('img');
@@ -101,18 +109,19 @@ var reddit = {
 				    	this.setAttribute('width', max_width);
 				    	this.setAttribute('height', max_height);
 
-				    	console.log(this.src + " " + ratio);
+				    	log(this.src + " " + ratio);
 			    	}
 				
 			    	img_div.setAttribute('src', img_link);
-			    	img_div.setAttribute('class', 'visible_image');
+			    	div.setAttribute('class', 'visible_image');
 
 			    	a.appendChild(img_div);
+			    	div.appendChild(a);
 
-			    	$this.appendChild(a);
+			    	$this.appendChild(div);
 
-			    } // end if
-			} // end for
+			    } // end if a valid img_link
+			} // end for each link
 
 /*
 			$('.entry').each(function() {  
@@ -197,5 +206,11 @@ function show(element) {
 		element.removeAttribute('hidden');
 	}
 }
+
+function log(message) {
+	if(LOGGING) {
+		console.log(message)
+	}
+} 
 
 
