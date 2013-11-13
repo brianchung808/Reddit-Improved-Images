@@ -5,7 +5,12 @@ var LOGGING = true;
 
 document.onload = function() {
 	// load the div to display image hover when mouseover img link...
-	// also do for videos?
+	// also do for videos?'
+	var body = document.getElementsByTagName('body')[0];
+	var popup = document.createElement('div');
+	var popup_img = document.createElement('img');
+
+	popup.appendChild(popup_img);
 }
 
 
@@ -79,38 +84,7 @@ var reddit = {
 			    	var img_div = document.createElement('img');
 			    		
 			    	// calculate display dimensions onload
-			    	img_div.onload = function() {
-			    		var width = this.clientWidth;
-			    		var height = this.clientHeight;
-
-			    		// get any side content to calculate max content width
-						var side = document.getElementsByClassName('side')[0];
-						var contents = document.getElementsByClassName('contents')[0];
-						var max_width = get_maincontent_width([side, contents]);
-
-						// make the pic max width a bit smaller
-						max_width *= 0.8;	
-
-				    	var ratio = max_width / width; 
-				    	var max_height;
-
-				    	if(isFinite(ratio)) {
-					    	if(ratio < 1.0){
-					    		max_height = height * ratio;
-					    	} else {
-					    		max_height = height;
-					    		max_width = width;
-					    	}
-					    } else {
-					    	max_width = 0;
-					    	max_height = 0;
-					    }
-
-				    	this.setAttribute('width', max_width);
-				    	this.setAttribute('height', max_height);
-
-				    	log(this.src + " " + ratio);
-			    	}
+			    	util.resizeImage(img_div);
 				
 			    	img_div.setAttribute('src', img_link);
 			    	div.setAttribute('class', 'visible_image');
@@ -159,6 +133,43 @@ var reddit = {
 			show(pics[i]);
 		}
 	}
+}
+
+var util = {
+	resizeImage : function(img) {
+						img.onload = function() {
+				    		var width = img.clientWidth;
+				    		var height = img.clientHeight;
+
+				    		// get any side content to calculate max content width
+							var side = document.getElementsByClassName('side')[0];
+							var contents = document.getElementsByClassName('contents')[0];
+							var max_width = get_maincontent_width([side, contents]);
+
+							// make the pic max width a bit smaller
+							max_width *= 0.8;	
+
+					    	var ratio = max_width / width; 
+					    	var max_height;
+
+					    	if(isFinite(ratio)) {
+						    	if(ratio < 1.0){
+						    		max_height = height * ratio;
+						    	} else {
+						    		max_height = height;
+						    		max_width = width;
+						    	}
+						    } else {
+						    	max_width = 0;
+						    	max_height = 0;
+						    }
+
+					    	img.setAttribute('width', max_width);
+					    	img.setAttribute('height', max_height);
+
+					    	log(img.src + " " + ratio);
+					 	}
+			    	}
 }
 
 function get_maincontent_width(sideDivs) {
