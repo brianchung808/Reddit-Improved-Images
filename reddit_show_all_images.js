@@ -6,18 +6,18 @@ var LOGGING = true;
 window.onload = function() {
 	// load the div to display image hover when mouseover img link...
 	// also do for videos?'
-	var body = document.getElementsByTagName('body')[0];
-	var popup = document.createElement('div');
-	popup.setAttribute('id', 'popup');
-	var popup_img = document.createElement('img');
+	var body = $('body');
+	
+	var popup = jQuery('<div/>', {
+		id: 'popup'
+	});
 
-	popup.appendChild(popup_img);
-	body.appendChild(popup);
+	var popup_img = jQuery('<img/>', {
+		id: 'popup_img'
+	});
 
-
-
-
-
+	popup.append(popup_img);
+	body.append(popup);
 }
 
 
@@ -50,12 +50,11 @@ var reddit = {
 
 		// else, manually create image div
 		} else {
-			var entries = $('.entry');//document.getElementsByClassName('entry');
+			var entries = $('.entry');
 
 			// for each of the posts
-			for(var i = 0; i < entries.length; i++) {
-				var $this = entries[i];
-				var img_link = $this.getElementsByTagName('a')[0].href;
+			$.each(entries, function() {
+				var img_link = $(this).find('a').attr('href');
 
 				// imgur case
 				if(img_link.indexOf('imgur') != -1) {
@@ -84,7 +83,7 @@ var reddit = {
 			    	img_link_lowercase.indexOf('.gif') != -1 ||
 			    	img_link_lowercase.indexOf('.tiff') != -1 ||
 			    	img_link_lowercase.indexOf('.bmp') != -1) {
-
+			    	
 			    	var div = document.createElement('div');
 			    	var a = document.createElement('a');
 					a.setAttribute('href', img_link);
@@ -99,10 +98,10 @@ var reddit = {
 			    	a.appendChild(img_div);
 			    	div.appendChild(a);
 
-			    	$this.appendChild(div);
+			    	$(this).append(div);
 
 			    } // end if a valid img_link
-			} // end for each link
+			}); // end for each link
 
 /*
 			$('.entry').each(function() {  
