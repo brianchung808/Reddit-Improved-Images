@@ -9,7 +9,8 @@ $(document).ready(function() {
 	var body = $('body');
 	
 	var popup = jQuery('<div/>', {
-		id: 'popup'
+		id: 'popup',
+		hidden: 'hidden'
 	});
 
 	popup.css({
@@ -51,23 +52,49 @@ $(document).ready(function() {
 		} 
 	});
 
-
 	var currentMousePos = { x: -1, y: -1 };
     $(document).mousemove(function(event) {
         currentMousePos.x = event.pageX;
         currentMousePos.y = event.pageY;
     });
 
-
-
+    var popup_visible = false;
 	$('.entry a').each(function() {
-		$(this).mouseover(function() {
-			var href = $(this).attr('href');
-			$('#popup #popup_img').attr('src', href);
+		$(this).mouseenter(function() {
+			if(!popup_visible){
+				var href = $(this).attr('href');
+				// imgur case
+				if(href.indexOf('imgur') != -1) {
+					href = href + '.gif';
+				}
+				$('#popup #popup_img').attr('src', href);
+				$('#popup').removeAttr('hidden');
+
+				popup_visible = true;
+			}
+
+		}).mousemove(function() {
+			var x = event.pageX + 10;
+			var y = event.pageY + 10;
+
+			/*
+			if(y + $('#popup_img').attr('height') > $(window).height()) {
+				util.log('Image past bottom window, resizing');
+				y = 10;
+			}
+			*/
+
 			$('#popup').css({
-				'left': currentMousePos.x,
-				'top': currentMousePos.y
+				'left': x, 
+				'top': y
 			});
+
+		}).mouseleave(function() {
+			// reset popup div back to clean slate
+			$('#popup').attr('hidden', 'hidden');
+			$('#popup_img').removeAttr("style src width height");
+			popup_visible = false;
+
 		});
 	});
 });
