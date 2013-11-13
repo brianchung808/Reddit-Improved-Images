@@ -13,6 +13,11 @@ window.onload = function() {
 
 	popup.appendChild(popup_img);
 	body.appendChild(popup);
+
+
+
+
+
 }
 
 
@@ -45,7 +50,7 @@ var reddit = {
 
 		// else, manually create image div
 		} else {
-			var entries = document.getElementsByClassName('entry');
+			var entries = $('.entry');//document.getElementsByClassName('entry');
 
 			// for each of the posts
 			for(var i = 0; i < entries.length; i++) {

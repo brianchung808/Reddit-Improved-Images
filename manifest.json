@@ -9,9 +9,12 @@
   "content_scripts": [
   {
     "matches": ["http://www.reddit.com/*"],
-    "js": ["reddit_show_all_images.js"]
+    "js": ["jquery-2.0.3.min.js", "reddit_show_all_images.js"]
   }
-  ]
+
+  ],
+    "web_accessible_resources": ["jquery-2.0.3.min.map"]
+
   /*,
 
   "permissions": [
