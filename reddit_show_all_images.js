@@ -3,14 +3,16 @@ var first_load = true;
 var LOGGING = true;
 
 
-document.onload = function() {
+window.onload = function() {
 	// load the div to display image hover when mouseover img link...
 	// also do for videos?'
 	var body = document.getElementsByTagName('body')[0];
 	var popup = document.createElement('div');
+	popup.setAttribute('id', 'popup');
 	var popup_img = document.createElement('img');
 
 	popup.appendChild(popup_img);
+	body.appendChild(popup);
 }
 
 
