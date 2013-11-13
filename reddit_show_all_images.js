@@ -83,7 +83,7 @@ var reddit = {
 			    	img_link_lowercase.indexOf('.gif') != -1 ||
 			    	img_link_lowercase.indexOf('.tiff') != -1 ||
 			    	img_link_lowercase.indexOf('.bmp') != -1) {
-			    	
+
 			    	var div = document.createElement('div');
 			    	var a = document.createElement('a');
 					a.setAttribute('href', img_link);
@@ -103,131 +103,117 @@ var reddit = {
 			    } // end if a valid img_link
 			}); // end for each link
 
-/*
-			$('.entry').each(function() {  
-			  var img_link = $(this).find('a').attr('href');
-			  var img_link_lowercase = img_link.toLowerCase();
-
-			  if( img_link_lowercase.indexOf('jpg') != -1
-		       || img_link_lowercase.indexOf('png') != -1
-			   || img_link_lowercase.indexOf('gif') != -1 ) {
-
-			  	var img_div = $('<a></a>');
-			    img_div.attr({ href: img_link });
-			    img_div.append($('<img></img>').attr({ src: img_link}));
-
-			    //var img_div = '<a href=' + img_link + '><img src="' + img_link + '"></img></a>';
-			    $(this).append(img_div);
-			  }
-			});
-*/
 		} // end else
 	}, 
 
 	hideAllImages: function() {
-		var pics = document.getElementsByClassName('visible_image');
+		var pics = util.getVisibleImages();
 
-		for(var i = pics.length; i >= 0 ; i--) {
-			hide(pics[i]);
-		}
+		pics.each(function() {
+			util.hide($(this));
+		});
 	},
 
 	unhideAllImages: function() {
-		var pics = document.getElementsByClassName('visible_image');
+		var pics = util.getVisibleImages();
 
-		for(var i = pics.length; i >= 0 ; i--) {
-			show(pics[i]);
-		}
+		pics.each(function() {
+			util.show($(this));
+		});
 	}
 }
 
 var util = {
-	resizeImage : function(img) {
-						img.onload = function() {
-				    		var width = img.clientWidth;
-				    		var height = img.clientHeight;
+	resizeImage: function(img) {
+		img.onload = function() {
+    		var width = img.clientWidth;
+    		var height = img.clientHeight;
 
-				    		// get any side content to calculate max content width
-							var side = document.getElementsByClassName('side')[0];
-							var contents = document.getElementsByClassName('contents')[0];
-							var max_width = get_maincontent_width([side, contents]);
+    		// get any side content to calculate max content width
+			var side = document.getElementsByClassName('side')[0];
+			var contents = document.getElementsByClassName('contents')[0];
+			var max_width = util.get_maincontent_width([side, contents]);
 
-							// make the pic max width a bit smaller
-							max_width *= 0.8;	
+			// make the pic max width a bit smaller
+			max_width *= 0.8;	
 
-					    	var ratio = max_width / width; 
-					    	var max_height;
+	    	var ratio = max_width / width; 
+	    	var max_height;
 
-					    	if(isFinite(ratio)) {
-						    	if(ratio < 1.0){
-						    		max_height = height * ratio;
-						    	} else {
-						    		max_height = height;
-						    		max_width = width;
-						    	}
-						    } else {
-						    	max_width = 0;
-						    	max_height = 0;
-						    }
+	    	if(isFinite(ratio)) {
+		    	if(ratio < 1.0){
+		    		max_height = height * ratio;
+		    	} else {
+		    		max_height = height;
+		    		max_width = width;
+		    	}
+		    } else {
+		    	max_width = 0;
+		    	max_height = 0;
+		    }
 
-					    	img.setAttribute('width', max_width);
-					    	img.setAttribute('height', max_height);
+	    	img.setAttribute('width', max_width);
+	    	img.setAttribute('height', max_height);
 
-					    	log(img.src + " " + ratio);
-					 	}
-			    	}
-}
+	    	util.log(img.src + " " + ratio);
+	 	}
+	},
 
-function get_maincontent_width(sideDivs) {
-	// get window dimensions
-	var w = window,
-	    d = document,
-	    e = d.documentElement,
-	    g = d.getElementsByTagName('body')[0],
-	    x = w.innerWidth || e.clientWidth || g.clientWidth,
-	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+	getVisibleImages: function() {
+		VISIBLE_IMAGE_CLASS = 'visible_image';
+		return $('.' + VISIBLE_IMAGE_CLASS);
+	}, 
+
+	get_maincontent_width: function(sideDivs) {
+		// get window dimensions
+		var w = window,
+		    d = document,
+		    e = d.documentElement,
+		    g = d.getElementsByTagName('body')[0],
+		    x = w.innerWidth || e.clientWidth || g.clientWidth,
+		    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
 
 
-	var max_width = x;
+		var max_width = x;
 
-	if(sideDivs === undefined || sideDivs === null || sideDivs.length === 0) {
+		if(sideDivs === undefined || sideDivs === null || sideDivs.length === 0) {
+			return max_width;
+		}
+
+		for(var i = 0; i < sideDivs.length; i++) {
+			var $this = sideDivs[i];
+			if($this) {
+				max_width -= $this.clientWidth;
+			}
+		}
+
 		return max_width;
-	}
+	},
 
-	for(var i = 0; i < sideDivs.length; i++) {
-		var $this = sideDivs[i];
-		if($this) {
-			max_width -= $this.clientWidth;
+	show: function(element) {
+		if (element !== undefined && element !== null) {
+			element.removeAttr('hidden');
+		}
+	},
+
+	remove: function(element) {
+	  if (element !== undefined && element !== null) {
+	    var parent = element.parentNode;
+	    parent.removeChild(element);
+	  }
+	},
+
+	hide: function(element) {
+		if (element !== undefined && element !== null) {
+			element.attr('hidden', 'hidden');
+		}		
+	},
+
+	log: function(message) {
+		if(LOGGING) {
+			console.log(message)
 		}
 	}
 
-	return max_width;
 }
-
-
-function remove(element) {
-  if (element !== undefined && element !== null) {
-    var parent = element.parentNode;
-    parent.removeChild(element);
-  }
-}
-
-function hide(element) {
-	if (element !== undefined && element !== null) {
-		element.setAttribute('hidden', 'hidden');
-	}
-}
-
-function show(element) {
-	if (element !== undefined && element !== null) {
-		element.removeAttribute('hidden');
-	}
-}
-
-function log(message) {
-	if(LOGGING) {
-		console.log(message)
-	}
-} 
-
 
