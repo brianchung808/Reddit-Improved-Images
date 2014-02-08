@@ -3,107 +3,43 @@ var first_load = true;
 var LOGGING = true;
 
 
-$(document).ready(function() {
+window.onload = function() {
 	// load the div to display image hover when mouseover img link...
 	// also do for videos?'
 	var body = $('body');
 	
 	var popup = jQuery('<div/>', {
-		id: 'popup',
-		hidden: 'hidden'
+		id: 'popup'
 	});
 
-	popup.css({
-		'z-index': 99999999,
-		'position': 'absolute'
-	});
-
-/*
 	var popup_img = jQuery('<img/>', {
 		id: 'popup_img'
 	});
-*/
-	var popup_img = document.createElement('img');
-	popup_img.setAttribute('id', 'popup_img');
-
-	util.resize_image(popup_img);
 
 	popup.append(popup_img);
 	body.append(popup);
-
-	/* Attach keydown listener for '+' key to load all images
-	 */
-	$('body').keydown(function(event) {
-		event = event || window.event;
-		var keycode = event.charCode || event.keyCode;
-		if(keycode === 187) {
-			if(!image_visible && first_load) {
-				reddit.showAllImages();
-				first_load = false;
-
-			} else if(!image_visible && !first_load) {
-				reddit.unhideAllImages();
-
-			} else if(image_visible) {
-				reddit.hideAllImages();
-			}
-
-			image_visible = !image_visible;	
-		} 
-	});
-
-	var currentMousePos = { x: -1, y: -1 };
-    $(document).mousemove(function(event) {
-        currentMousePos.x = event.pageX;
-        currentMousePos.y = event.pageY;
-    });
-
-    var popup_visible = false;
-	$('.entry a').each(function() {
-		$(this).mouseenter(function() {
-			if(!popup_visible){
-				var href = $(this).attr('href');
-				// imgur case
-				if(href.indexOf('imgur') != -1) {
-					href = href + '.gif';
-				}
-				$('#popup #popup_img').attr('src', href);
-				$('#popup').removeAttr('hidden');
-
-				popup_visible = true;
-			}
-
-		}).mousemove(function() {
-			var x = event.pageX + 10;
-			var y = event.pageY + 10;
-
-			/*
-			if(y + $('#popup_img').attr('height') > $(window).height()) {
-				util.log('Image past bottom window, resizing');
-				y = 10;
-			}
-			*/
-
-			$('#popup').css({
-				'left': x, 
-				'top': y
-			});
-
-		}).mouseleave(function() {
-			// reset popup div back to clean slate
-			$('#popup').attr('hidden', 'hidden');
-			$('#popup_img').removeAttr("style src width height");
-			popup_visible = false;
-
-		});
-	});
-});
+}
 
 
+document.body.onkeydown = function(event) {
+	event = event || window.event;
+	var keycode = event.charCode || event.keyCode;
+	if(keycode === 187) {
+		if(!image_visible && first_load) {
+			reddit.showAllImages();
+			first_load = false;
 
+		} else if(!image_visible && !first_load) {
+			reddit.unhideAllImages();
 
-/* reddit namespace that holds functions that perform main functionality
- */
+		} else if(image_visible) {
+			reddit.hideAllImages();
+		}
+
+		image_visible = !image_visible;	
+	} 
+}
+
 var reddit = {
 	showAllImages: function() {
 		var show_images_button = document.getElementById('viewImagesButton');
@@ -154,7 +90,7 @@ var reddit = {
 			    	var img_div = document.createElement('img');
 			    		
 			    	// calculate display dimensions onload
-			    	util.resize_image(img_div);
+			    	util.resizeImage(img_div);
 				
 			    	img_div.setAttribute('src', img_link);
 			    	div.setAttribute('class', 'visible_image');
@@ -171,7 +107,7 @@ var reddit = {
 	}, 
 
 	hideAllImages: function() {
-		var pics = util.get_visible_images();
+		var pics = util.getVisibleImages();
 
 		pics.each(function() {
 			util.hide($(this));
@@ -179,7 +115,7 @@ var reddit = {
 	},
 
 	unhideAllImages: function() {
-		var pics = util.get_visible_images();
+		var pics = util.getVisibleImages();
 
 		pics.each(function() {
 			util.show($(this));
@@ -187,12 +123,8 @@ var reddit = {
 	}
 }
 
-/* util namespace that holds utility functions that are commonly useful
- */
 var util = {
-	VISIBLE_IMAGE_CLASS: 'visible_image',
-
-	resize_image: function(img) {
+	resizeImage: function(img) {
 		img.onload = function() {
     		var width = img.clientWidth;
     		var height = img.clientHeight;
@@ -227,8 +159,9 @@ var util = {
 	 	}
 	},
 
-	get_visible_images: function() {
-		return $('.' + util.VISIBLE_IMAGE_CLASS);
+	getVisibleImages: function() {
+		VISIBLE_IMAGE_CLASS = 'visible_image';
+		return $('.' + VISIBLE_IMAGE_CLASS);
 	}, 
 
 	get_maincontent_width: function(sideDivs) {
